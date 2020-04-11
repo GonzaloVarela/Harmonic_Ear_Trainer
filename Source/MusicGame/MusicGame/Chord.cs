@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework; //Lo necesito para usar el GameTime
-using Prueba1; //necesito poner esto para poder acceder a variables static de Game1
+using MusicGame; //necesito poner esto para poder acceder a variables static de Game1
 using System.Diagnostics;
 
 

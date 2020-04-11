@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prueba1
+namespace MusicGame
 {
     //creo los enums correspondientes (valores que elementos que variables pueden tomar, o sea que por ejemplo una variable de tipo "ChordType" solo podría tomar los valores enumerados en ChordType). Para leer más comentarios de esto y sobre cómo se relacionan con los Dictionaries correspondientes, leer lo que comenté en la class "Dictionaries".
     //hago a los enums public porque voy a querer hacer public a variables que creo con estos enums como tipo.

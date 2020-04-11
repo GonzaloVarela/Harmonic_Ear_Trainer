@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Prueba1")]
-[assembly: AssemblyProduct("Prueba1")]
+[assembly: AssemblyTitle("MusicGame")]
+[assembly: AssemblyProduct("MusicGame")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]

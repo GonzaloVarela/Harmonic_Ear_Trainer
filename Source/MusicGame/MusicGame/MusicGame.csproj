@@ -9,8 +9,8 @@
     <ProjectGuid>{34C60993-C88A-4FA7-B7B8-82B7E290EC1E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Prueba1</RootNamespace>
-    <AssemblyName>Prueba1</AssemblyName>
+    <RootNamespace>MusicGame</RootNamespace>
+    <AssemblyName>MusicGame</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>

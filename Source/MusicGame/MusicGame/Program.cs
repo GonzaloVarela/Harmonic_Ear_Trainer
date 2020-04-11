@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prueba1
+namespace MusicGame
 {
 #if WINDOWS || LINUX
     /// <summary>

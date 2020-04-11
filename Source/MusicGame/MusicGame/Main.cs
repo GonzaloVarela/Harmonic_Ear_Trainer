@@ -5,7 +5,7 @@ using System; //necesaria para random
 using System.Diagnostics; //necesaria para debugging
 using Microsoft.Xna.Framework.Audio; //para cargar WAVs.
 
-namespace Prueba1
+namespace MusicGame
 {
     /// <summary>
     /// This is the main type for your game.
@@ -19,7 +19,7 @@ namespace Prueba1
 
         public static Random randomize = new Random(); //creo una instancia de la Class "Random" que llamo "randomize", con la que voy a randomizar los números correspondientes a tipo de acorde, inversión del acorde y fundamental de acorde.
 
-        SpriteFont font; //Creo una variable para luegocargar el font que voy a usar.
+        SpriteFont font; //Creo una variable para luego cargar el font que voy a usar.
 
         KeyboardState previousKeyboardState;
 
@@ -180,7 +180,7 @@ namespace Prueba1
 
             spriteBatch.DrawString(font, "Left arrow randomizes chord, Right arrow repeats chord.", new Vector2(0, 0), Color.Black);
             spriteBatch.DrawString(font, "Up arrow arpeggiates chord.", new Vector2(0, 50), Color.Black);
-            spriteBatch.DrawString(font, "Down arrow displays Chord Description.", new Vector2(0, 100), Color.Black);
+            spriteBatch.DrawString(font, "Down arrow displays chord description.", new Vector2(0, 100), Color.Black);
             spriteBatch.DrawString(font, "Space bar mutes audio.", new Vector2(0, 150), Color.Black);
             if (audioIsMuted) spriteBatch.DrawString(font, "THE AUDIO IS MUTED", new Vector2(0, 200), Color.Red);
             spriteBatch.DrawString(font, chordDescriptionPart1, new Vector2(0, 250), Color.Black);
