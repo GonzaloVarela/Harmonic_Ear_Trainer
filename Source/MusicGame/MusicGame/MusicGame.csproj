@@ -41,7 +41,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Managers\AudioManager.cs" />
     <Compile Include="Chord.cs" />
+    <Compile Include="Managers\ChordListManager.cs" />
+    <Compile Include="UI\Checkbox.cs" />
+    <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Dictionaries.cs" />
     <Compile Include="Main.cs" />

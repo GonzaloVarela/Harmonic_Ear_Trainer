@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MusicGame
 {
-    class Dictionaries
+    static class Dictionaries
     {
         //para manejar los tipos de acorde creo enums y dictionaries.
         //los enums determinan los distintos valores que una variable a la que le asigno ese tipo puede tomar (por ejemplo, cada acorde puede estar ser mayor o menor, y estar en posición fundamental o 1era inv), y pueden tomar distintos valores para cada instancia de Chord (porque puedo querer tener en la memoria dos acordes, uno mayor y otro menor)
@@ -24,20 +24,20 @@ namespace MusicGame
             chordType.Add(1, "Minor");
             chordType.Add(2, "Diminished");
             chordType.Add(3, "Augmented");
-            chordType.Add(4, "Dominant seventh");
+            chordType.Add(4, "Dominant Seventh");
             chordType.Add(5, "Minor Seventh");
-            chordType.Add(6, "Half-diminished seventh");
-            chordType.Add(7, "Major seventh");
-            chordType.Add(8, "Minor major seventh");
-            chordType.Add(9, "Augmented major seventh");
-            chordType.Add(10, "Diminished seventh");
-            chordType.Add(11, "Dominant Seventh flat five (7b5)");
-            chordType.Add(12, "Dominant Seventh sharp five (7#5)");
-            chordType.Add(13, "Dominant ninth");
-            chordType.Add(14, "Dominant minor ninth");
-            chordType.Add(15, "Major ninth");
-            chordType.Add(16, "Minor ninth");
-            chordType.Add(17, "Major 6/9");
+            chordType.Add(6, "Half-diminished Seventh");
+            chordType.Add(7, "Major Seventh");
+            chordType.Add(8, "Minor Major Seventh");
+            chordType.Add(9, "Augmented Major Seventh");
+            chordType.Add(10, "Diminished Seventh");
+            chordType.Add(11, "Major Ninth");
+            chordType.Add(12, "Minor Ninth");
+            chordType.Add(13, "Major 6/9");
+            chordType.Add(14, "Dominant Ninth");
+            chordType.Add(15, "Dominant Minor Ninth");
+            chordType.Add(16, "Dominant Seventh Flat Five");
+            chordType.Add(17, "Dominant Seventh Sharp Five");
             chordType.Add(18, "Sus4");
             chordType.Add(19, "Sus2");
             chordType.Add(20, "7 sus4");
