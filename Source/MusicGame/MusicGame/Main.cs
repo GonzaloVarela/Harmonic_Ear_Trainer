@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using System; //necesaria para random
 using System.Diagnostics; //necesaria para debugging
 using Microsoft.Xna.Framework.Audio; //para cargar WAVs.
+using MusicGame.ChordGuessing;
+using MusicGame._General;
 
 namespace MusicGame
 {
@@ -22,17 +24,23 @@ namespace MusicGame
         public static int marginVertical = 20;
 
         //defino separaciones de filas y columnas que voy a tomar en cuenta cuando dibuje texto
-        public static int positionRowSeparation = 40;
-        public static int positionColumnSeparation = 270;
-        // public static int positionSmallRowSeparation = 30;
-        // public static int positionSmallColumnSeparation = 10;
+        public static int gridRowSeparation = 40;
+        public static int gridColumnSeparation = 270;
 
 
 
         public static Random randomize = new Random(); //creo una instancia de la Class "Random" que llamo "randomize", con la que voy a randomizar los números correspondientes a tipo de acorde, inversión del acorde y fundamental de acorde.
 
         public static SpriteFont font; //Creo una variable para luego cargar el font que voy a usar.
+        
+        // creo variables para los colores de font que voy a usar
+        public static Color fontColorGeneric { get; set; } = Color.Black;
+        public static Color fontColorCorrectAnswer { get; set; } = Color.Green;
+        public static Color fontColorWrongAnswer { get; set; } = Color.Red;
 
+
+
+        public static Texture2D background { get; set; }
         public static Texture2D checkboxSelected;
         public static Texture2D checkboxUnselected;
 
@@ -44,7 +52,7 @@ namespace MusicGame
         //Creo las variables de tipo "SoundEffect" donde voy a cargar los archivos de sonido con las notas correspondientes.
         public static SoundEffect[] noteSoundFiles = new SoundEffect[128]; //Creo un array de SoundEffects de 128 elementos, para cargar los archivos de sonido correspondientes.
 
-        Chord chord1 = new Chord(); //genero una instancia de la clase Chord llamada "chord1"
+        ChordVoicing chord1 = new ChordVoicing(); //genero una instancia de la clase Chord llamada "chord1"
 
         public Main()
         {
@@ -98,7 +106,8 @@ namespace MusicGame
             // Cargo el font a la variable "font"
             font = Content.Load<SpriteFont>("Fonts/Arial");
 
-            // Cargo las imágenes de los checkbox
+            // Cargo las imágenes
+            background = Content.Load<Texture2D>("Images/background");
             checkboxSelected = Content.Load<Texture2D>("Images/checkbox_selected");
             checkboxUnselected = Content.Load<Texture2D>("Images/checkbox_unselected");
 
@@ -194,15 +203,19 @@ namespace MusicGame
         {
             GraphicsDevice.Clear(Color.White);
 
+
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
 
-            spriteBatch.DrawString(font, "Left arrow randomizes chord, Right arrow repeats chord.", new Vector2(marginHorizontal, marginVertical), Color.Black);
-            spriteBatch.DrawString(font, "Up arrow arpeggiates chord.", new Vector2(marginHorizontal, marginVertical + positionRowSeparation), Color.Black);
-            spriteBatch.DrawString(font, "Down arrow displays chord description.", new Vector2(marginHorizontal, marginVertical + positionRowSeparation * 2), Color.Black);
-            spriteBatch.DrawString(font, chordDescriptionPart1, new Vector2(marginHorizontal, marginVertical + positionRowSeparation * 3), Color.Green);
-            spriteBatch.DrawString(font, chordDescriptionPart2, new Vector2(marginHorizontal, marginVertical + positionRowSeparation * 4), Color.Green);
+            spriteBatch.Draw(background, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+
+
+            spriteBatch.DrawString(font, "Left arrow randomizes chord, Right arrow repeats chord.", new Vector2(marginHorizontal, marginVertical), fontColorGeneric);
+            spriteBatch.DrawString(font, "Up arrow arpeggiates chord.", new Vector2(marginHorizontal, marginVertical + gridRowSeparation), fontColorGeneric);
+            spriteBatch.DrawString(font, "Down arrow displays chord description.", new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 2), fontColorGeneric);
+            spriteBatch.DrawString(font, chordDescriptionPart1, new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 3), fontColorCorrectAnswer);
+            spriteBatch.DrawString(font, chordDescriptionPart2, new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 4), fontColorCorrectAnswer);
 
 
             AudioManager.Draw(spriteBatch); //llamo a la función "Draw" del AudioManager

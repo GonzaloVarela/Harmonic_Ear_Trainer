@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace MusicGame
 {
 
-    public class Chord
+    public class ChordVoicing
     {
         public int noteRootPitchClass;  //la hago public porque la voy a usar para poner en los textos de la respuesta.
         public ChordType type; //creo una variable "type" de tipo "ChordType" (que es un enum)
