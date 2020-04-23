@@ -42,12 +42,12 @@ namespace MusicGame
             chordType.Add(19, "Sus2");
             chordType.Add(20, "7 sus4");
             chordType.Add(21, "7 sus2");
-            chordType.Add(22, "Power Chord");
+            chordType.Add(22, "No Third");
 
             chordInversion.Add(0, "Root position");
-            chordInversion.Add(1, "First inversion");
-            chordInversion.Add(2, "Second inversion");
-            chordInversion.Add(3, "Third inversion");
+            chordInversion.Add(1, "First Inversion");
+            chordInversion.Add(2, "Second Inversion");
+            chordInversion.Add(3, "Third Inversion");
 
             pitchClass.Add(0, "C");
             pitchClass.Add(1, "C#");

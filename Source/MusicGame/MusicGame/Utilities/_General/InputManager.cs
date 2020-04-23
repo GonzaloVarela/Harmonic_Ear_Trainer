@@ -14,8 +14,8 @@ namespace MusicGame._General
         public static KeyboardState currentKeyboardState;
         public static KeyboardState previousKeyboardState;
 
-        public static MouseState currentMouseState;
-        public static MouseState previousMouseState;
+        public static MouseState mouseState;
+        public static MouseState mouseStatePrevious;
 
         public static bool IsKeyPressedJustNow(Keys key) //función que puedo llamar cuando quiera para determinar si una tecla recién se apretó (devuelve negativo si estaba apretado de antes)
         {
@@ -25,12 +25,12 @@ namespace MusicGame._General
 
         public static bool IsLeftButtonPressedJustNow() //función que puedo llamar cuando quiera para determinar si el botón izquierdo recién se apretó (devuelve negativo si estaba apretado de antes)
         {
-             return (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton != ButtonState.Pressed);
+             return (mouseState.LeftButton == ButtonState.Pressed && mouseStatePrevious.LeftButton != ButtonState.Pressed);
 
         }
         public static bool IsRightButtonPressedJustNow() //función que puedo llamar cuando quiera para determinar si el botón derecho recién se apretó (devuelve negativo si estaba apretado de antes)
         {
-            return (currentMouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton != ButtonState.Pressed);
+            return (mouseState.RightButton == ButtonState.Pressed && mouseStatePrevious.RightButton != ButtonState.Pressed);
 
         }
         public static void Update(GameTime gameTime) //no quiero tener que inicializar una instancia de Input para usar esta función, por eso la hago static.
@@ -42,8 +42,8 @@ namespace MusicGame._General
             currentKeyboardState = Keyboard.GetState();
 
 
-            previousMouseState = currentMouseState;
-            currentMouseState = Mouse.GetState();
+            mouseStatePrevious = mouseState;
+            mouseState = Mouse.GetState();
         }
 
     }

@@ -13,14 +13,16 @@ namespace MusicGame
 
     public class Checkbox
     {
-        public bool stateEnabled { get; set; } = true; //que el checkbox esté enabled o no es independiente de que esté selected. Si es true se va a mostrar con el color azul, sino con el color rojo
-        public bool stateSelected { get; set; } = true; //si es true se muestra la imagen con tick, si es false se muestra la imagen sin tick
+        public bool stateEnabled { get; set; } //que el checkbox esté enabled o no es independiente de que esté selected. Si es true se va a mostrar con el color azul, sino con el color rojo
+        public bool stateSelected { get; set; } //si es true se muestra la imagen con tick, si es false se muestra la imagen sin tick
+
+        private bool _stateHovering = false; //si el mouse está haciendo hovering quiero que cambie el color del button.
 
         Vector2 _position;
         string _label; //texto que se muestra al lado del checkbox
         Vector2 _labelSize; // para almacenar el tamaño que ocupa el label (importante porque lo quiero hacer clickeable)
         int _category; // acá voy a asignar un int que corresponda a la "categoría" de la instancia de checkbox, para desde afuera poder si quiero trabajar con todos los checkbox de una categoría al mismo tiempo o cosas así. Me conviene hacer un enum CheckboxCategory, y pasar como categoría del checkbox valores del enum casteados como int (así el checkbox es más independiente porque simplemente le entran ints como categoría, pero yo desde afuera del checkbox puedo pensar las categorías con nombres de acuerdo al proyecto).
-        Color color { get; set; } //color de la imagen del checkbox y su label (cuando el checkbox esté enabled será azul cuando ésté disabled será rojo).
+        Color color { get; set; } //color de la imagen del checkbox y su label (cuando el checkbox esté enabled será azul cuando esté disabled será rojo).
 
 
         int _imageSize = 20;
@@ -44,24 +46,26 @@ namespace MusicGame
 
         public void Update(MouseState mouseState)
         {
-            if (InputManager.IsLeftButtonPressedJustNow() == true) //checkeo si el mouse recién se clickeó
+            // checkeo si el mouse se encuentra entre los límites del button (incluyendo imagen, label, y espacio entre imagen y label)
+            if (mouseState.X >= _position.X && mouseState.X < _position.X + _imageSize + _spaceBetweenImageAndLabel + _labelSize.X && mouseState.Y >= _position.Y && mouseState.Y < _position.Y + _imageSize)
             {
-                // checkeo si el mouse se encuentra entre los límites del checkbox (incluyendo imagen, label, y espacio entre imagen y label)
-                if (mouseState.X >= _position.X && mouseState.X < _position.X + _imageSize + _spaceBetweenImageAndLabel + _labelSize.X && mouseState.Y >= _position.Y && mouseState.Y < _position.Y + _imageSize)
+                _stateHovering = true;
+
+                //checkeo si el mouse recién se clickeó, y en ese caso llamo a la función correspondiente
+                if (InputManager.IsLeftButtonPressedJustNow() == true)
                 {
-                    OnCheckboxClickedLeft(); //en caso de que el mouse se haya clickeado entre los límites de la imagen del checkbox, llamo a la función.
+                    OnCheckboxClickedLeft();
+                }
+
+                if (InputManager.IsRightButtonPressedJustNow() == true)
+                {
+                    OnCheckboxClickedRight();
                 }
             }
-
-            if (InputManager.IsRightButtonPressedJustNow() == true) //checkeo si el mouse recién se clickeó
+            else
             {
-                // checkeo si el mouse se encuentra entre los límites del checkbox (incluyendo imagen, label, y espacio entre imagen y label)
-                if (mouseState.X >= _position.X && mouseState.X < _position.X + _imageSize + _spaceBetweenImageAndLabel + _labelSize.X && mouseState.Y >= _position.Y && mouseState.Y < _position.Y + _imageSize)
-                {
-                    OnCheckboxClickedRight(); //en caso de que el mouse se haya clickeado entre los límites de la imagen del checkbox, llamo a la función.
-                }
+                _stateHovering = false;
             }
-
         }
 
         public virtual void OnCheckboxClickedLeft() //al clickear en el la imagen quiero seleccionar/deseleccionar el checkbox.
@@ -77,7 +81,8 @@ namespace MusicGame
         public void Draw(SpriteBatch spriteBatch) // a la función Draw le paso un SpriteBatch, así no tengo que hacer Begin a un nuevo SpriteBatch dentro de esta función, sino que puedo usar un SpriteBatch que ya haya comenzado.
         {
             //Cambio el color dependiendo del estado del checkbox
-            if (stateEnabled == true) color = Color.Blue;
+            if (_stateHovering == true) color = Color.Green;
+            else if (stateEnabled == true) color = Color.Blue;
             else color = Color.Red;
 
             //cambio la imagen dependiendo de si el checkbox está seleccionado o no

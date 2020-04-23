@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="UI\Bang.cs" />
     <Compile Include="Utilities\ChordGuessing\ChordPlayer.cs" />
     <Compile Include="Utilities\ChordGuessing\ChordAnsweringManager.cs" />
     <Compile Include="Utilities\ChordGuessing\ScoreManager.cs" />

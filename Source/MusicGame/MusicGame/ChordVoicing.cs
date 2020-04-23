@@ -8,8 +8,8 @@ namespace MusicGame
     public class ChordVoicing
     {
         public int noteRootPitchClass;  //la hago public porque la voy a usar para poner en los textos de la respuesta.
-        public ChordType type; //creo una variable "type" de tipo "ChordType" (que es un enum)
-        public ChordInversion inversion; //creo una variable "inversion" de tipo "ChordInversion" (que es un enum)
+        public ChordType type; //creo una variable "chordType" de tipo "ChordType" (que es un enum)
+        public ChordInversion inversion; //creo una variable "chordInversion" de tipo "ChordInversion" (que es un enum)
 
         int doublingRandomization; //voy a usar esta variable cuando haga randomizaciones de qué nota se duplica en el acorde (si por ejemplo tengo dos opciones de doubling, voy a ponerle un número aleatorio entre 0 y 1 y elegir la duplicación dependiendo de qué número salga)
 
@@ -43,7 +43,7 @@ namespace MusicGame
         private Voice _voiceToPlay = Voice.None;
 
 
-        private double _arpeggioTimer;    //timer para agendar las reproducción de las notas del arpegio
+        private double _arpeggioTimer = 0;    //timer para agendar las reproducción de las notas del arpegio
         double arpeggioTimeBetweenNotes = 750; // tiempo entre notas consecutivas del arpegio (en un principio 750ms). La hago public porque eventualmente quiero que sea algo que el jugador pueda programar.
 
 
@@ -60,13 +60,13 @@ namespace MusicGame
             _noteBassPitchClass = Main.randomize.Next(0, 12); //randomizo el bajo del acorde (a partir del cual voy a calcular todas las otras notas), que será un entero entre 0 y 11.
             _noteBassOctave = 3; //para el bajo voy a usar la octava 3 (luego voy a hacer una opción para activar una duplicación del bajo a la octava inferior, es decir, la octava 2-).
 
-            type = (ChordType)RandomizeTypeAmongEnabledTypes(); //llamo a la función que randomiza el tipo de acorde entre los tipos de acorde habilitados, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "type" porque la variable "type" no es de tipo "int" de tipo ChordType (el enum).
+            type = (ChordType)RandomizeTypeAmongEnabledTypes(); //llamo a la función que randomiza el tipo de acorde entre los tipos de acorde habilitados, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordType" porque la variable "chordType" no es de tipo "int" de tipo ChordType (el enum).
 
             //calculo cuáles son las notas superiores del acorde en base a cuál es el bajo y cuál es el tipo de acorde.
             switch (type)
             {
                 case ChordType.Major:
-                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition:
@@ -137,7 +137,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.Minor:
-                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition:
@@ -208,7 +208,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.Diminished:
-                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTriadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tríada entre las inversiones de tríada habilitadas (es decir, sin tomar en cuenta si la tercera inversión está habilitada), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition:
@@ -370,7 +370,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.DominantSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //en estado fundamental considero la opción de que sea completa (con la quinta, y sin duplicaciones) o incompleta (sin la quinta, y con la fundamental duplicada).
@@ -466,7 +466,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.MinorSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -517,7 +517,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.HalfDiminishedSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -568,7 +568,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.MajorSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -619,7 +619,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.MinorMajorSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -670,7 +670,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.AugmentedMajorSeventh:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -773,7 +773,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.DominantSeventhFlatFive:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -824,7 +824,7 @@ namespace MusicGame
                     break;
 
                 case ChordType.DominantSeventhSharpFive:
-                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                    inversion = (ChordInversion)RandomizeTetradInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una tétrada entre las inversiones de tétrada habilitadas, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //Para esta tétrada no considero duplicaciones en ninguna inversión (siempre la hago completa)
@@ -1036,8 +1036,8 @@ namespace MusicGame
                     }
                     break;
 
-                case ChordType.PowerChord:
-                    inversion = (ChordInversion)RandomizeDyadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una díada entre las inversiones de díada habilitadas (root position y primera inversión, que en este caso sería con la quinta en el bajo), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "inversion" porque la variable "inversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
+                case ChordType.NoThird:
+                    inversion = (ChordInversion)RandomizeDyadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una díada entre las inversiones de díada habilitadas (root position y primera inversión, que en este caso sería con la quinta en el bajo), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
                         case ChordInversion.RootPosition: //En ambos estados duplico tanto la fundamental como la quinta
@@ -1137,7 +1137,7 @@ namespace MusicGame
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 10) % 12; //considero la 2da como el bajo en la primera inversión
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.SecondInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12;
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.ThirdInversion) noteRootPitchClass = (_noteBassPitchClass + 2) % 12;
-            else if (type == ChordType.PowerChord && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
+            else if (type == ChordType.NoThird && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
 
 
             // Análisis de cuál de las notas superiores (HighA, HighB y HighC) es la más aguda ("soprano"), segunda más aguda ("alto") y más grave ("tenor"). DEBE HABER UNA MEJOR FORMA DE HACERLO.
@@ -1218,7 +1218,7 @@ namespace MusicGame
 
             switch (_voiceToPlay)
             {
-                // paso a tocar las notas del acorde (de grave a aguda),separadas por el tiempo determinado por "arpeggioTimeBetweenNotes" (que se considera en ms). A medida que toco una nota cargo la variable "_voiceToPlay" con el valor correspondiente a la nota siguiente.
+                // paso a tocar las notas del acorde (de grave a aguda), separadas por el tiempo determinado por "arpeggioTimeBetweenNotes" (que se considera en ms). A medida que toco una nota cargo la variable "_voiceToPlay" con el valor correspondiente a la nota siguiente.
                 case Voice.Bass:
                     if (_arpeggioTimer >= arpeggioTimeBetweenNotes * 0)
                     {
@@ -1261,10 +1261,10 @@ namespace MusicGame
                 if (isTypeEnabled[i]) numberOfEnabledTypes++;
             }
 
-            //Randomizo el tipo del acorde entre la cantidad de tipos de acorde que haya habilitados (si hay 3 tipos de acorde habilitados, va a randomizar un número entre 0 y 2). Este número NO lo usaré directamente como índice del type (sigo explicando abajo)
+            //Randomizo el tipo del acorde entre la cantidad de tipos de acorde que haya habilitados (si hay 3 tipos de acorde habilitados, va a randomizar un número entre 0 y 2). Este número NO lo usaré directamente como índice del chordType (sigo explicando abajo)
             int unmappedTypeNumber = Main.randomize.Next(0, numberOfEnabledTypes);
 
-            //El número que me dio"randomize" no lo podré usar directamente como índice para el enum "type", porque hay que ver qué tipos están deshabilitados y saltearlos de la cuenta.
+            //El número que me dio"randomize" no lo podré usar directamente como índice para el enum "chordType", porque hay que ver qué tipos están deshabilitados y saltearlos de la cuenta.
             //Por ejemplo, si me dio que el tipo de acorde era el tercer valor posible del random (índice 2), pero sé que en realidad tengo deshabilitados el primer y el tercer acorde de la lista (índices 0 y 2); el tipo de acorde verdadero que tengo que tocar es el quinto (índice 4).
 
             // Mapeo del número que me salió del random al índice que realmente va a determinar el tipo de acorde ("salteando" los que se hayan deshabilitado)
@@ -1272,7 +1272,7 @@ namespace MusicGame
             // Sin embargo, las opciones de tipo de acorde que estén deshabilitadas no me obligan a "gastarme un paso" (porque me las salteo)
             // Por ejemplo, si unmappedTypeNumber es 2, pero el tipo de acorde 1 está deshabilitado, mappedTimeNumber debe ser 3.
             int mappedTypeNumber; //inicializo la variable que va a determinar el número mapeado.
-            for (mappedTypeNumber = 0; mappedTypeNumber < isTypeEnabled.Length; mappedTypeNumber++) //comienzo a iterar hasta como máximo la cantidad de índices en isTypeEnabled (no necesariamente voy a llegar a iterar hasta ese máximo), sumándole en cada vuelta 1 a mapped type number
+            for (mappedTypeNumber = 0; mappedTypeNumber < isTypeEnabled.Length; mappedTypeNumber++) //comienzo a iterar hasta como máximo la cantidad de índices en isTypeEnabled (no necesariamente voy a llegar a iterar hasta ese máximo), sumándole en cada vuelta 1 a mapped chordType number
             {
                 if (isTypeEnabled[mappedTypeNumber]) unmappedTypeNumber--; //si y solo sí el índice IsTypeEnabled por el que se está pasando está stateEnsabled, tengo que gastarme uno de los pasos
                                                                            //en cambio, si está disabled, puedo volver al comienzo del for statement (sumarle 1 a mappedTypeNumber sin necesidad de gastarme uno de los pasos)

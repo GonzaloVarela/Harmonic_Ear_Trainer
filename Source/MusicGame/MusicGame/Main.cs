@@ -10,7 +10,7 @@ using MusicGame._General;
 namespace MusicGame
 {
     /// <summary>
-    /// This is the main type for your game.
+    /// This is the main chordType for your game.
     /// </summary>
     public class Main : Game
     {
@@ -20,8 +20,8 @@ namespace MusicGame
         SpriteBatch spriteBatch;
 
         //defino márgenes de la ventana que voy a tomar en cuenta cada vez que dibuje algo
-        public static int marginHorizontal = 20;
-        public static int marginVertical = 20;
+        public static int marginLeft = 20;
+        public static int marginTop = 20;
 
         //defino separaciones de filas y columnas que voy a tomar en cuenta cuando dibuje texto
         public static int gridRowSeparation = 40;
@@ -32,27 +32,28 @@ namespace MusicGame
         public static Random randomize = new Random(); //creo una instancia de la Class "Random" que llamo "randomize", con la que voy a randomizar los números correspondientes a tipo de acorde, inversión del acorde y fundamental de acorde.
 
         public static SpriteFont font; //Creo una variable para luego cargar el font que voy a usar.
-        
+
         // creo variables para los colores de font que voy a usar
-        public static Color fontColorGeneric { get; set; } = Color.Black;
-        public static Color fontColorCorrectAnswer { get; set; } = Color.Green;
-        public static Color fontColorWrongAnswer { get; set; } = Color.Red;
+        public static Color fontColorDefault { get; set; } = Color.Black;
+        public static Color fontColorForCorrectAnswer { get; set; } = Color.Green;
+        public static Color fontColorForWrongAnswer { get; set; } = Color.Red;
 
 
 
         public static Texture2D background { get; set; }
         public static Texture2D checkboxSelected;
         public static Texture2D checkboxUnselected;
+        public static Texture2D bangSelected;
+        public static Texture2D bangUnselected;
 
+        public static Bang aboutDialog = null; //creo la variable para el botón aboutDialog pero no la inicializo acá, la voy a inicializar después así me aseguro de que se inicializa después de cargar las fuentes.
 
         // en estos string voy a guardar los textos de descripción del acorde.
-        string chordDescriptionPart1 = "";
-        string chordDescriptionPart2 = "";
+        public static string chordDescriptionPart1 = "";
+        public static string chordDescriptionPart2 = "";
 
         //Creo las variables de tipo "SoundEffect" donde voy a cargar los archivos de sonido con las notas correspondientes.
         public static SoundEffect[] noteSoundFiles = new SoundEffect[128]; //Creo un array de SoundEffects de 128 elementos, para cargar los archivos de sonido correspondientes.
-
-        ChordVoicing chord1 = new ChordVoicing(); //genero una instancia de la clase Chord llamada "chord1"
 
         public Main()
         {
@@ -87,8 +88,9 @@ namespace MusicGame
             AudioManager.Initialize(); //llamo a la función "Initialize" del Audio Manager, que es necesario hacerlo luego de cargar contenido, así puedo acceder al font (obs.: como AudioManager es static no es necesario inicializar una instancia)
 
             ChordListManager.Initialize(); //llamo a la función "Initialize" del Audio Manager, que es necesario hacerlo luego de cargar contenido, así puedo acceder al font (obs.: como AudioManager es static no es necesario inicializar una instancia)
+            ChordPlayer.Initialize();
 
-
+            aboutDialog = new Bang(new Vector2(marginLeft + gridColumnSeparation, marginTop + gridRowSeparation * 5), "About...", (int)BangCategory.Dialog, true); //botón "aboutDialog"
         }
 
 
@@ -110,6 +112,8 @@ namespace MusicGame
             background = Content.Load<Texture2D>("Images/background");
             checkboxSelected = Content.Load<Texture2D>("Images/checkbox_selected");
             checkboxUnselected = Content.Load<Texture2D>("Images/checkbox_unselected");
+            bangSelected = Content.Load<Texture2D>("Images/bang_selected");
+            bangUnselected = Content.Load<Texture2D>("Images/bang_unselected");
 
 
 
@@ -151,48 +155,45 @@ namespace MusicGame
 
             if (InputManager.IsKeyPressedJustNow(Keys.Left))
             {
-                chordDescriptionPart1 = "";
-                chordDescriptionPart2 = "";
-                chord1.Generate(); //llamo a la función de chord1 "Generate"
-                chord1.PlaySimultaneous(); //llamo a la función de chord1 "Play"
+                ChordPlayer.GenerateShortcut();
             }
 
             if (InputManager.IsKeyPressedJustNow(Keys.Right))
             {
-                chord1.PlaySimultaneous(); //llamo a la función de chord1 "Play"
+                ChordPlayer.PlaySimultaneousShortcut();
             }
 
             if (InputManager.IsKeyPressedJustNow(Keys.Up))
             {
-                chord1.PlayArpeggio(); //llamo a la función de chord1 "PlayArpeggio"
+                ChordPlayer.PlayArpeggioShortcut();
             }
 
             if (InputManager.IsKeyPressedJustNow(Keys.Down))
             {
                 //En la descripción de part1, para estas variables uso los diccionarios (que cargo de la class "Dictionaries", y como índices de los diccionarios uso valores de chord1.
-                //Los casos del chordType y el chordInversion son más elaborados, porque para obtener los índices de los diccionarios como integers (que es como los preciso) debo convertir a integers los valores de las variables type e inversion, alojadas en chord1 (como uso enums esos valores son de tipo ChordType y ChordInversion, por eso debo convertirlos).
-                chordDescriptionPart1 = $"The random chord generated was {Dictionaries.pitchClass[chord1.noteRootPitchClass]} {Dictionaries.chordType[(int)chord1.type].ToLower()} in {Dictionaries.chordInversion[(int)chord1.inversion].ToLower()}"; //(paso los nombres de los diccionarios chordType y chordInversion a lowercase)
-                chordDescriptionPart2 = $"The MIDI pitches were (in order from low to high) {chord1.noteBassPitchMidi}, {chord1.noteTenorPitchMidi}, {chord1.noteAltoPitchMidi} and {chord1.noteSopranoPitchMidi} ({Dictionaries.pitchMidi[chord1.noteBassPitchMidi]}, {Dictionaries.pitchMidi[chord1.noteTenorPitchMidi]}, {Dictionaries.pitchMidi[chord1.noteAltoPitchMidi]} and {Dictionaries.pitchMidi[chord1.noteSopranoPitchMidi]}).";
+                //Los casos del chordType y el chordInversion son más elaborados, porque para obtener los índices de los diccionarios como integers (que es como los preciso) debo convertir a integers los valores de las variables chordType e chordInversion, alojadas en chord1 (como uso enums esos valores son de tipo ChordType y ChordInversion, por eso debo convertirlos).
+                chordDescriptionPart1 = $"The random chord generated was {Dictionaries.pitchClass[ChordPlayer.chord1.noteRootPitchClass]} {Dictionaries.chordType[(int)ChordPlayer.chord1.type]} in {Dictionaries.chordInversion[(int)ChordPlayer.chord1.inversion]}";
+                chordDescriptionPart2 = $"The MIDI pitches were (in order from low to high) {ChordPlayer.chord1.noteBassPitchMidi}, {ChordPlayer.chord1.noteTenorPitchMidi}, {ChordPlayer.chord1.noteAltoPitchMidi} and {ChordPlayer.chord1.noteSopranoPitchMidi} ({Dictionaries.pitchMidi[ChordPlayer.chord1.noteBassPitchMidi]}, {Dictionaries.pitchMidi[ChordPlayer.chord1.noteTenorPitchMidi]}, {Dictionaries.pitchMidi[ChordPlayer.chord1.noteAltoPitchMidi]} and {Dictionaries.pitchMidi[ChordPlayer.chord1.noteSopranoPitchMidi]}).";
             }
 
             if (InputManager.IsKeyPressedJustNow(Keys.Space))
             {
-                AudioManager.AudioToggleWithShortcut(); //llamo a la función "AudioToggleWithShortcut" del AudioManager, que se va a encargar de habilitar o deshabilitar el audio (y mostrar el efecto) según corresponda).
+                AudioManager.AudioToggleShortcut(); //llamo a la función "AudioToggleShortcut" del AudioManager, que se va a encargar de habilitar o deshabilitar el audio (y mostrar el efecto) según corresponda).
             }
 
 
-            chord1.UpdateArpeggio(gameTime); //en cada update corro a la función "UpdateArpeggio" del acorde.
             InputManager.Update(gameTime); //también el update del InputManager, que checkea estados de teclado y mouse (qué está o no está apretado)
 
-            AudioManager.Update(InputManager.currentMouseState); //también a la función Update de AudioManager
-            ChordListManager.Update(InputManager.currentMouseState);
+            AudioManager.Update(InputManager.mouseState); //también a la función Update de AudioManager
+            ChordListManager.Update(InputManager.mouseState);
+            ChordPlayer.Update(gameTime, InputManager.mouseState);
 
-
+            aboutDialog.Update(gameTime, InputManager.mouseState);
 
             base.Update(gameTime);
         }
 
-        
+
 
 
         /// <summary>
@@ -210,16 +211,15 @@ namespace MusicGame
 
             spriteBatch.Draw(background, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
 
-
-            spriteBatch.DrawString(font, "Left arrow randomizes chord, Right arrow repeats chord.", new Vector2(marginHorizontal, marginVertical), fontColorGeneric);
-            spriteBatch.DrawString(font, "Up arrow arpeggiates chord.", new Vector2(marginHorizontal, marginVertical + gridRowSeparation), fontColorGeneric);
-            spriteBatch.DrawString(font, "Down arrow displays chord description.", new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 2), fontColorGeneric);
-            spriteBatch.DrawString(font, chordDescriptionPart1, new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 3), fontColorCorrectAnswer);
-            spriteBatch.DrawString(font, chordDescriptionPart2, new Vector2(marginHorizontal, marginVertical + gridRowSeparation * 4), fontColorCorrectAnswer);
+            spriteBatch.DrawString(font, chordDescriptionPart1, new Vector2(marginLeft, marginTop + gridRowSeparation * 3), fontColorForCorrectAnswer);
+            spriteBatch.DrawString(font, chordDescriptionPart2, new Vector2(marginLeft, marginTop + gridRowSeparation * 4), fontColorForCorrectAnswer);
 
 
             AudioManager.Draw(spriteBatch); //llamo a la función "Draw" del AudioManager
             ChordListManager.Draw(spriteBatch);
+            ChordPlayer.Draw(spriteBatch);
+
+            aboutDialog.Draw(spriteBatch);
 
             spriteBatch.End();
 

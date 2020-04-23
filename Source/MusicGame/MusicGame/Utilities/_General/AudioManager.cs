@@ -8,7 +8,7 @@ namespace MusicGame._General
     static class AudioManager
     {
 
-        public static Checkbox audioAbility = new Checkbox(new Vector2(Main.marginHorizontal, Main.marginVertical + Main.gridRowSeparation * 5), "Audio [ space ]", (int)CheckboxCategory.AudioToggle, true, true); //inicializo una instancia de la class "Checkbox", que voy a usar para habilitar o deshabilitar el audio.
+        public static Checkbox audioAbility = new Checkbox(new Vector2(Main.marginLeft, Main.marginTop + Main.gridRowSeparation * 5), "Audio [ space ]", (int)CheckboxCategory.AudioToggle, true, true); //inicializo una instancia de la class "Checkbox", que voy a usar para habilitar o deshabilitar el audio.
 
         public static float audioVolume = 1f; //Creo una variable "audioVolume", que inicializo en 1 pero que luego haré que el jugador pueda determinar con un slider.
 
@@ -20,7 +20,7 @@ namespace MusicGame._General
         }
 
 
-        public static void OnCheckboxClickedLeft(Checkbox checkbox, int category, bool stateEnabled, bool stateSelected)
+        static void OnCheckboxClickedLeft(Checkbox checkbox, int category, bool stateEnabled, bool stateSelected)
         {
             if (stateSelected) // si hago click con botón izq en la checkbox cuando la checkbox está seleccionada, desactivo el audio, y deselecciono el checkbox.
             {
@@ -35,7 +35,7 @@ namespace MusicGame._General
         }
 
 
-        public static void AudioToggleWithShortcut() //función que se llama si uso el shortcut para habilitar o deshabilitar el audio (tecla Space)
+        public static void AudioToggleShortcut() //función que se llama si uso el shortcut para habilitar o deshabilitar el audio (tecla Space)
         {
             audioAbility.OnCheckboxClickedLeft(); //Si uso el shortcut, quiero hacer lo mismo que haga si clickeara el checkbox con click izquierdo
         }

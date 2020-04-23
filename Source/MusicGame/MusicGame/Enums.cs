@@ -9,7 +9,12 @@ namespace MusicGame
     //creo los enums correspondientes (valores que elementos que variables pueden tomar, o sea que por ejemplo una variable de tipo "ChordType" solo podría tomar los valores enumerados en ChordType). Para leer más comentarios de esto y sobre cómo se relacionan con los Dictionaries correspondientes, leer lo que comenté en la class "Dictionaries".
     //hago a los enums public porque voy a querer hacer public a variables que creo con estos enums como tipo.
 
-    public enum CheckboxCategory //Categorías de los checkboxes, que las uso para desde afuera poder si quiero por ejemplo determinar que solo una checkbox de esa categoría pueda seleccionado a la vez (como para al estar adivinando el acorde solo poder seleccionar 1 tipo y una inversión a la vez).
+    public enum BangCategory  //Categorías de los bangs, que las por ahora no las uso para nadapero me parece que está bueno tener.
+    {
+        Dialog = 0, //por ejemplo para el aboutDialog
+        ChordPlaying = 1, //de los bangs relacionados con tocar acordes
+    }
+    public enum CheckboxCategory //Categorías de los checkboxes, que las por ahora no las uso para nadapero me parece que está bueno tener.
     {
         AudioToggle = 0, //del checkbox que habilita o deshabilita el tipo de audio
         ChordType = 1, //de los checkboxes de tipos de acordes
@@ -40,7 +45,7 @@ namespace MusicGame
         SusTwo = 19,
         SevenSusFour = 20,
         SevenSusTwo = 21,
-        PowerChord = 22,
+        NoThird = 22,
     }
 
     public enum ChordInversion
