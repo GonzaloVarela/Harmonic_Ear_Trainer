@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MusicGame._General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace MusicGame
         public bool stateEnabled { get; set; } //que el bang esté enabled o no es independiente de que esté selected. Si es true se va a mostrar con el color azul, sino con el color rojo
         public bool stateSelected { get; set; } = false; //si es true se muestra la imagen con el punto en el medio, si es false muestra la imagen sin el punto en el medio. Solo va a ser true por un instante, no es como el checkbox que se puede quedar true (por eso no uso esta variable en el constructor ni en los delegates).
 
-        private bool _stateHovering = false; //si el mouse está haciendo hovering quiero que cambie el color del bang.
+        bool _stateHovering = false; //si el mouse está haciendo hovering quiero que cambie el color del bang.
 
         Vector2 _position;
         string _label; //texto que se muestra al lado del bang
@@ -30,15 +29,15 @@ namespace MusicGame
         int _spaceBetweenImageAndLabel = 10;
 
         public delegate void BangClickedEventHandler(Bang bang, int category, bool stateEnabled); //declaro el delegate que voy a usar para relacionar cada bang con uno o más methods (para darle funcionalidad). Los methods deberán recibir los paráetros especificados.
-        public event BangClickedEventHandler BangClickedLeft; //declaro la variable (event, en este caso) que tiene como tipo el delegate, y que voy a poder llamar desde esta clase cuando se clickee el bang con botón izquierdo, pero va a apuntar a una o más funciones externas a esta clase,
-        public event BangClickedEventHandler BangClickedRight; //declaro la variable (event, en este caso) que tiene como tipo el delegate, y que voy a poder llamar desde esta clase cuando se clickee el bang con botón derecho, pero va a apuntar a una o más funciones externas a esta clase,
+        public event BangClickedEventHandler BangClickedWithLeftButton; //declaro la variable (event, en este caso) que tiene como tipo el delegate, y que voy a poder llamar desde esta clase cuando se clickee el bang con botón izquierdo, pero va a apuntar a una o más funciones externas a esta clase,
+        public event BangClickedEventHandler BangClickedWithRightButton; //declaro la variable (event, en este caso) que tiene como tipo el delegate, y que voy a poder llamar desde esta clase cuando se clickee el bang con botón derecho, pero va a apuntar a una o más funciones externas a esta clase,
 
 
         public Bang(Vector2 position, string label, int category, bool initStateEnabled) //hago un constructor para cargar las variables
         {
             _position = position;
             _label = label;
-            _labelSize = Main.font.MeasureString(label);
+            _labelSize = Main.fontDefault.MeasureString(label);
             _category = category;
             stateEnabled = initStateEnabled;
         }
@@ -54,12 +53,12 @@ namespace MusicGame
                 //checkeo si el mouse recién se clickeó, y en ese caso llamo a la función correspondiente
                 if (InputManager.IsLeftButtonPressedJustNow() == true)
                 {
-                    OnBangClickedLeft();
+                    OnBangClickedWithLeftButton();
                 }
 
                 if (InputManager.IsRightButtonPressedJustNow() == true)
                 {
-                    OnBangClickedRight();
+                    OnBangClickedWithdRightButton();
                 }
             }
             else
@@ -81,15 +80,22 @@ namespace MusicGame
             }
         }
 
-        public virtual void OnBangClickedLeft() //al clickear en el la imagen quiero seleccionar/deseleccionar el bang.
+        public virtual void OnBangClickedWithLeftButton() //al clickear en el la imagen quiero seleccionar/deseleccionar el bang.
         {
-            if (BangClickedLeft != null) BangClickedLeft(this, _category, stateEnabled); //Si la variable no es null (o sea, si apunta a al menos una función, es decir que alguien se "suscribió a ese event) anuncio el event. Qué es exactamente lo que sucede cuando esto ocurra será determinado por aquellas funciones a las que el event apunte (aquellos "Event handlers" que se hayan subscripto al event).
-            stateSelected = true;
+            if (stateEnabled == true) // checkeo si está enabled, el bang quiero que si no está enabled no se pueda seleccionar (a diferencia del checkbox)
+            {
+                if (BangClickedWithLeftButton != null) //Si la variable no es null (o sea, si apunta a al menos una función, es decir que alguien se "suscribió a ese event) anuncio el event. Qué es exactamente lo que sucede cuando esto ocurra será determinado por aquellas funciones a las que el event apunte (aquellos "Event handlers" que se hayan subscripto al event).
+                {
+                    BangClickedWithLeftButton(this, _category, stateEnabled);
+                }
+
+                stateSelected = true;
+            }
         }
 
-        public virtual void OnBangClickedRight() //al clickear en el label quiero habilitar/deshabilitar el bang.
+        public virtual void OnBangClickedWithdRightButton() //al clickear en el label quiero habilitar/deshabilitar el bang.
         {
-            if (BangClickedRight != null) BangClickedRight(this, _category, stateEnabled); //Si la variable no es null (o sea, si apunta a al menos una función, es decir que alguien se "suscribió a ese event) anuncio el event. Qué es exactamente lo que sucede cuando esto ocurra será determinado por aquellas funciones a las que el event apunte (aquellos "Event handlers" que se hayan subscripto al event).
+            if (BangClickedWithRightButton != null) BangClickedWithRightButton(this, _category, stateEnabled); //Si la variable no es null (o sea, si apunta a al menos una función, es decir que alguien se "suscribió a ese event) anuncio el event. Qué es exactamente lo que sucede cuando esto ocurra será determinado por aquellas funciones a las que el event apunte (aquellos "Event handlers" que se hayan subscripto al event).
         }
 
         public void Draw(SpriteBatch spriteBatch) // a la función Draw le paso un SpriteBatch, así no tengo que hacer Begin a un nuevo SpriteBatch dentro de esta función, sino que puedo usar un SpriteBatch que ya haya comenzado.
@@ -103,12 +109,12 @@ namespace MusicGame
             if (stateSelected == true)
             {
                 spriteBatch.Draw(Main.bangSelected, new Rectangle((int)_position.X, (int)_position.Y, _imageSize, _imageSize), color); //como los Vector2 trabajan con floats y acá necesito ints, casteo los valores como ints.
-                spriteBatch.DrawString(Main.font, _label, new Vector2(_position.X + _imageSize + _spaceBetweenImageAndLabel, (int)_position.Y), color);
+                spriteBatch.DrawString(Main.fontDefault, _label, new Vector2(_position.X + _imageSize + _spaceBetweenImageAndLabel, (int)_position.Y), color);
             }
             else
             {
                 spriteBatch.Draw(Main.bangUnselected, new Rectangle((int)_position.X, (int)_position.Y, _imageSize, _imageSize), color);
-                spriteBatch.DrawString(Main.font, _label, new Vector2(_position.X + _imageSize + _spaceBetweenImageAndLabel, (int)_position.Y), color);
+                spriteBatch.DrawString(Main.fontDefault, _label, new Vector2(_position.X + _imageSize + _spaceBetweenImageAndLabel, (int)_position.Y), color);
             }
 
         }

@@ -7,9 +7,9 @@ namespace MusicGame
 
     public class ChordVoicing
     {
-        public int noteRootPitchClass;  //la hago public porque la voy a usar para poner en los textos de la respuesta.
-        public ChordType type; //creo una variable "chordType" de tipo "ChordType" (que es un enum)
-        public ChordInversion inversion; //creo una variable "chordInversion" de tipo "ChordInversion" (que es un enum)
+        public int noteRootPitchClass { get; set; }  //la hago public porque la voy a usar para poner en los textos de la respuesta.
+        public ChordType type { get; set; } //creo una variable "chordType" de tipo "ChordType" (que es un enum)
+        public ChordInversion inversion { get; set; } //creo una variable "chordInversion" de tipo "ChordInversion" (que es un enum)
 
         int doublingRandomization; //voy a usar esta variable cuando haga randomizaciones de qué nota se duplica en el acorde (si por ejemplo tengo dos opciones de doubling, voy a ponerle un número aleatorio entre 0 y 1 y elegir la duplicación dependiendo de qué número salga)
 
@@ -44,7 +44,7 @@ namespace MusicGame
 
 
         private double _arpeggioTimer = 0;    //timer para agendar las reproducción de las notas del arpegio
-        double arpeggioTimeBetweenNotes = 750; // tiempo entre notas consecutivas del arpegio (en un principio 750ms). La hago public porque eventualmente quiero que sea algo que el jugador pueda programar.
+        private double _arpeggioTimeBetweenNotes; // tiempo entre notas consecutivas del arpegio (varía depependiendo de la checkbox correspondiente).
 
 
         //array de bools para determinar qué chord types están habilitados
@@ -54,15 +54,23 @@ namespace MusicGame
         public static bool[] isInversionEnabled = new bool[4];
 
 
-        public void Generate()
+        public void GenerateRandomVoicing()
         {
-
             _noteBassPitchClass = Main.randomize.Next(0, 12); //randomizo el bajo del acorde (a partir del cual voy a calcular todas las otras notas), que será un entero entre 0 y 11.
             _noteBassOctave = 3; //para el bajo voy a usar la octava 3 (luego voy a hacer una opción para activar una duplicación del bajo a la octava inferior, es decir, la octava 2-).
 
             type = (ChordType)RandomizeTypeAmongEnabledTypes(); //llamo a la función que randomiza el tipo de acorde entre los tipos de acorde habilitados, y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordType" porque la variable "chordType" no es de tipo "int" de tipo ChordType (el enum).
 
-            //calculo cuáles son las notas superiores del acorde en base a cuál es el bajo y cuál es el tipo de acorde.
+            DetermineHighNotes(); //calculo cuáles son las notas superiores del acorde en base a cuál es el bajo y cuál es el tipo de acorde.
+
+            CalculateRootNotePitchClass(); // calculo cuál es el pitch class del rootnote (en relación al bajo, y tomando el cuenta el tipo de acorde y la inversión).
+
+            AssignHighNotesToHighVoices(); // Analizo cuál de las notas superiores (HighA, HighB y HighC) es la más aguda (que se la asigno a la soprano), segunda más aguda (que se la asigno al alto) y más grave (que se la asigno al tenor).
+        }
+
+
+        private void DetermineHighNotes()  //calculo cuáles son las notas superiores del acorde en base a cuál es el bajo y cuál es el tipo de acorde.
+        {
             switch (type)
             {
                 case ChordType.Major:
@@ -1036,7 +1044,7 @@ namespace MusicGame
                     }
                     break;
 
-                case ChordType.NoThird:
+                case ChordType.Fifth:
                     inversion = (ChordInversion)RandomizeDyadInversionAmongEnabledInversions(); //llamo a la función que randomiza la inversión de una díada entre las inversiones de díada habilitadas (root position y primera inversión, que en este caso sería con la quinta en el bajo), y uso el valor que devuelve como índice para el enum correspondiente a esa variable (no puedo pasarle directamente el valor a la variable "chordInversion" porque la variable "chordInversion" no es de tipo "int" sino de tipo ChordInversion (el enum).
                     switch (inversion)
                     {
@@ -1074,8 +1082,10 @@ namespace MusicGame
             _noteHighAPitchMidi = _noteHighAPitchClass + _noteHighAOctave * 12 + 12;
             _noteHighBPitchMidi = _noteHighBPitchClass + _noteHighBOctave * 12 + 12;
             _noteHighCPitchMidi = _noteHighCPitchClass + _noteHighCOctave * 12 + 12;
-
-            // calculo cuál es el pitch class del rootnote (en relación al bajo, y tomando el cuenta el tipo de acorde y la inversión). Como lo que me interesa es saber el Pitch Class lo "encierro en una octava", así que uso módulo 12 para que si por ejemplo la nota es "15" se convierta en un "3" (que en el Dictionary pitchClass defino como "D#").
+        }
+        private void CalculateRootNotePitchClass() // calculo cuál es el pitch class del rootnote (en relación al bajo, y tomando el cuenta el tipo de acorde y la inversión).
+        {
+            // Como lo que me interesa es saber el Pitch Class del root not (no el pitch absoluto) lo "encierro en una octava", así que uso módulo 12 para que si por ejemplo la nota es "15" se convierta en un "3" (que en el Dictionary pitchClass defino como "D#").
             if (inversion == ChordInversion.RootPosition) noteRootPitchClass = _noteBassPitchClass; //esto incluye todos los casos de acorde aumentado, tétrada disminuida, y otros acordes que al menos por ahora solo considero o solo toco en estado fundamental, pero de todas formas acá considero la posibilidad de que cualquier acorde esté en cualquier inversión que pueda llegar a tener sentido, porque así si los agrego a la lista anterior no hay problema si me olvido de agregarlos acá.
             else if (type == ChordType.Major && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 8) % 12;
             else if (type == ChordType.Major && inversion == ChordInversion.SecondInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12;
@@ -1137,125 +1147,12 @@ namespace MusicGame
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 10) % 12; //considero la 2da como el bajo en la primera inversión
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.SecondInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12;
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.ThirdInversion) noteRootPitchClass = (_noteBassPitchClass + 2) % 12;
-            else if (type == ChordType.NoThird && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
-
-
-            // Análisis de cuál de las notas superiores (HighA, HighB y HighC) es la más aguda ("soprano"), segunda más aguda ("alto") y más grave ("tenor"). DEBE HABER UNA MEJOR FORMA DE HACERLO.
-            if (_noteHighAPitchMidi > _noteHighBPitchMidi && _noteHighAPitchMidi > _noteHighCPitchMidi)
-            {
-                noteSopranoPitchMidi = _noteHighAPitchMidi;
-
-                if (_noteHighBPitchMidi > _noteHighCPitchMidi)
-                {
-                    noteAltoPitchMidi = _noteHighBPitchMidi;
-                    noteTenorPitchMidi = _noteHighCPitchMidi;
-                }
-                else
-                {
-                    noteAltoPitchMidi = _noteHighCPitchMidi;
-                    noteTenorPitchMidi = _noteHighBPitchMidi;
-                }
-            }
-
-
-            else if (_noteHighBPitchMidi > _noteHighAPitchMidi && _noteHighBPitchMidi > _noteHighCPitchMidi)
-            {
-                noteSopranoPitchMidi = _noteHighBPitchMidi;
-
-                if (_noteHighAPitchMidi > _noteHighCPitchMidi)
-                {
-                    noteAltoPitchMidi = _noteHighAPitchMidi;
-                    noteTenorPitchMidi = _noteHighCPitchMidi;
-                }
-                else
-                {
-                    noteAltoPitchMidi = _noteHighCPitchMidi;
-                    noteTenorPitchMidi = _noteHighAPitchMidi;
-                }
-            }
-
-            else if (_noteHighCPitchMidi > _noteHighAPitchMidi && _noteHighCPitchMidi > _noteHighBPitchMidi)
-            {
-                noteSopranoPitchMidi = _noteHighCPitchMidi;
-
-                if (_noteHighAPitchMidi > _noteHighBPitchMidi)
-                {
-                    noteAltoPitchMidi = _noteHighAPitchMidi;
-                    noteTenorPitchMidi = _noteHighBPitchMidi;
-                }
-                else
-                {
-                    noteAltoPitchMidi = _noteHighBPitchMidi;
-                    noteTenorPitchMidi = _noteHighAPitchMidi;
-                }
-            }
-
-            Debug.WriteLine($"Soprano Pitch Midi: {noteSopranoPitchMidi}");
-            Debug.WriteLine($"Alto Pitch Midi: {noteAltoPitchMidi}");
-            Debug.WriteLine($"Tenor Pitch Midi: {noteTenorPitchMidi}");
-            Debug.WriteLine($"Bass Pitch Midi: {noteBassPitchMidi}");
-        }
-
-        public void PlaySimultaneous()
-        {
-            _voiceToPlay = Voice.None; //des-agendo las reproducciones de arpeggio (para que no se superponga esto con nuevas notas de un arpegio que viene sonando de antes).
-
-            Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
-        }
-        public void PlayArpeggio()
-        {
-            _voiceToPlay = Voice.Bass;
-
-            _arpeggioTimer = 0; //reseteo el Timer del arpegio (que está en ms)
-        }
-
-        public void UpdateArpeggio(GameTime gameTime)
-        {
-            _arpeggioTimer += gameTime.ElapsedGameTime.TotalMilliseconds; //al timer del arpegio (que funciona con milisegundos) le voy sumando el tiempo que pasa en cada frame (sin eso no sería un timer).
-
-            switch (_voiceToPlay)
-            {
-                // paso a tocar las notas del acorde (de grave a aguda), separadas por el tiempo determinado por "arpeggioTimeBetweenNotes" (que se considera en ms). A medida que toco una nota cargo la variable "_voiceToPlay" con el valor correspondiente a la nota siguiente.
-                case Voice.Bass:
-                    if (_arpeggioTimer >= arpeggioTimeBetweenNotes * 0)
-                    {
-                        Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
-                        _voiceToPlay = Voice.Tenor;
-                    }
-                    break;
-
-                case Voice.Tenor:
-                    if (_arpeggioTimer >= arpeggioTimeBetweenNotes * 1)
-                    {
-                        Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
-                        _voiceToPlay = Voice.Alto;
-                    }
-                    break;
-
-                case Voice.Alto:
-                    if (_arpeggioTimer >= arpeggioTimeBetweenNotes * 2)
-                    {
-                        Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
-                        _voiceToPlay = Voice.Soprano;
-                    }
-                    break;
-
-                case Voice.Soprano:
-                    if (_arpeggioTimer >= arpeggioTimeBetweenNotes * 3)
-                    {
-                        Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
-                        _voiceToPlay = Voice.None;
-                    }
-                    break;
-            }
+            else if (type == ChordType.Fifth && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
         }
 
         int RandomizeTypeAmongEnabledTypes() //Randomiza el tipo de acorde entre los tipos de acorde que haya habilitados
         {
-            int numberOfEnabledTypes = 0;//Cuento la cantidad de tipos de acorde habilitados
+            int numberOfEnabledTypes = 0; //Cuento la cantidad de tipos de acorde habilitados
             for (int i = 0; i < isTypeEnabled.Length; i++)
             {
                 if (isTypeEnabled[i]) numberOfEnabledTypes++;
@@ -1343,6 +1240,128 @@ namespace MusicGame
                 if (unmappedInversionNumber < 0) break;
             }
             return mappedInversionNumber; //devuelvo el número de inversión "real" (es decir, mapeado a las inversiones que haya habilitadas)
+        }
+        private void AssignHighNotesToHighVoices() // Analizo cuál de las notas superiores (HighA, HighB y HighC) es la más aguda (que se la asigno a la soprano), segunda más aguda (que se la asigno al alto) y más grave (que se la asigno al tenor).
+        {
+
+            if (_noteHighAPitchMidi > _noteHighBPitchMidi && _noteHighAPitchMidi > _noteHighCPitchMidi)
+            {
+                noteSopranoPitchMidi = _noteHighAPitchMidi;
+
+                if (_noteHighBPitchMidi > _noteHighCPitchMidi)
+                {
+                    noteAltoPitchMidi = _noteHighBPitchMidi;
+                    noteTenorPitchMidi = _noteHighCPitchMidi;
+                }
+                else
+                {
+                    noteAltoPitchMidi = _noteHighCPitchMidi;
+                    noteTenorPitchMidi = _noteHighBPitchMidi;
+                }
+            }
+
+
+            else if (_noteHighBPitchMidi > _noteHighAPitchMidi && _noteHighBPitchMidi > _noteHighCPitchMidi)
+            {
+                noteSopranoPitchMidi = _noteHighBPitchMidi;
+
+                if (_noteHighAPitchMidi > _noteHighCPitchMidi)
+                {
+                    noteAltoPitchMidi = _noteHighAPitchMidi;
+                    noteTenorPitchMidi = _noteHighCPitchMidi;
+                }
+                else
+                {
+                    noteAltoPitchMidi = _noteHighCPitchMidi;
+                    noteTenorPitchMidi = _noteHighAPitchMidi;
+                }
+            }
+
+            else if (_noteHighCPitchMidi > _noteHighAPitchMidi && _noteHighCPitchMidi > _noteHighBPitchMidi)
+            {
+                noteSopranoPitchMidi = _noteHighCPitchMidi;
+
+                if (_noteHighAPitchMidi > _noteHighBPitchMidi)
+                {
+                    noteAltoPitchMidi = _noteHighAPitchMidi;
+                    noteTenorPitchMidi = _noteHighBPitchMidi;
+                }
+                else
+                {
+                    noteAltoPitchMidi = _noteHighBPitchMidi;
+                    noteTenorPitchMidi = _noteHighAPitchMidi;
+                }
+            }
+
+            Debug.WriteLine($"Soprano Pitch Midi: {noteSopranoPitchMidi}");
+            Debug.WriteLine($"Alto Pitch Midi: {noteAltoPitchMidi}");
+            Debug.WriteLine($"Tenor Pitch Midi: {noteTenorPitchMidi}");
+            Debug.WriteLine($"Bass Pitch Midi: {noteBassPitchMidi}");
+        }
+
+
+        public void PlaySimultaneous()
+        {
+            _voiceToPlay = Voice.None; //des-agendo las reproducciones de arpeggio (para que no se superponga esto con nuevas notas de un arpegio que viene sonando de antes).
+
+            Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
+            Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
+            Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
+            Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
+        }
+        public void PlayArpeggio()
+        {
+            _voiceToPlay = Voice.Bass;
+            if (ChordPlayingManager.slowerArpeggiations.stateSelected == true) //determino la velocidad del arpegio dependiendo de si el checkbox "Slower Arpeggiations" está activado o no.
+            {
+                _arpeggioTimeBetweenNotes = 1000;
+            }
+            else
+            {
+                _arpeggioTimeBetweenNotes = 500;
+            }
+            _arpeggioTimer = 0; //reseteo el Timer del arpegio (que está en ms)
+        }
+
+        public void UpdateArpeggio(GameTime gameTime)
+        {
+            _arpeggioTimer += gameTime.ElapsedGameTime.TotalMilliseconds; //al timer del arpegio (que funciona con milisegundos) le voy sumando el tiempo que pasa en cada frame (sin eso no sería un timer).
+
+            switch (_voiceToPlay)
+            {
+                // paso a tocar las notas del acorde (de grave a aguda), separadas por el tiempo determinado por "_arpeggioTimeBetweenNotes" (que se considera en ms). A medida que toco una nota cargo la variable "_voiceToPlay" con el valor correspondiente a la nota siguiente.
+                case Voice.Bass:
+                    if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 0)
+                    {
+                        Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
+                        _voiceToPlay = Voice.Tenor;
+                    }
+                    break;
+
+                case Voice.Tenor:
+                    if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 1)
+                    {
+                        Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
+                        _voiceToPlay = Voice.Alto;
+                    }
+                    break;
+
+                case Voice.Alto:
+                    if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 2)
+                    {
+                        Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
+                        _voiceToPlay = Voice.Soprano;
+                    }
+                    break;
+
+                case Voice.Soprano:
+                    if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 3)
+                    {
+                        Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
+                        _voiceToPlay = Voice.None;
+                    }
+                    break;
+            }
         }
     }
 }

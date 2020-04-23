@@ -12,11 +12,11 @@ namespace MusicGame
     public enum BangCategory  //Categorías de los bangs, que las por ahora no las uso para nadapero me parece que está bueno tener.
     {
         Dialog = 0, //por ejemplo para el aboutDialog
-        ChordPlaying = 1, //de los bangs relacionados con tocar acordes
+        Chord = 1, //de los bangs relacionados con acordes (tocar, adivinar, etc.)
     }
     public enum CheckboxCategory //Categorías de los checkboxes, que las por ahora no las uso para nadapero me parece que está bueno tener.
     {
-        AudioToggle = 0, //del checkbox que habilita o deshabilita el tipo de audio
+        Option = 0, //para activar o desactivar opciones en general
         ChordType = 1, //de los checkboxes de tipos de acordes
         ChordInversion = 2, //de los checkboxes de inversiones de acordes
     }
@@ -45,7 +45,7 @@ namespace MusicGame
         SusTwo = 19,
         SevenSusFour = 20,
         SevenSusTwo = 21,
-        NoThird = 22,
+        Fifth = 22,
     }
 
     public enum ChordInversion

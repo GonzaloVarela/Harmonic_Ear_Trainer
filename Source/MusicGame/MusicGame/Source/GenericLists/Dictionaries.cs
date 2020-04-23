@@ -42,9 +42,9 @@ namespace MusicGame
             chordType.Add(19, "Sus2");
             chordType.Add(20, "7 sus4");
             chordType.Add(21, "7 sus2");
-            chordType.Add(22, "No Third");
+            chordType.Add(22, "Fifth (No Third)");
 
-            chordInversion.Add(0, "Root position");
+            chordInversion.Add(0, "Root Position");
             chordInversion.Add(1, "First Inversion");
             chordInversion.Add(2, "Second Inversion");
             chordInversion.Add(3, "Third Inversion");
