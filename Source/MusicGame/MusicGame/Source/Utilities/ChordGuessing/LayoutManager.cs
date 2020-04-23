@@ -40,7 +40,7 @@ namespace MusicGame
             spriteBatch.DrawString(Main.fontDefault, "Select Chord Inversion:", new Vector2(marginLeft, marginTop + gridRowSeparation * 14), Main.fontColorDefault);
             spriteBatch.DrawString(Main.fontDefault, "Answer:", new Vector2(marginLeft, marginTop + gridRowSeparation * 17), Main.fontColorDefault);
             spriteBatch.DrawString(Main.fontDefault, "Options:", new Vector2(marginLeft + gridColumnSeparation * 2, marginTop + gridRowSeparation * 17), Main.fontColorDefault);
-            spriteBatch.DrawString(Main.fontDefault, "v1.0 (revision: 2020.xx.xx)", new Vector2(marginLeft, marginTop + gridRowSeparation * 22), Main.fontColorDefault);
+            spriteBatch.DrawString(Main.fontDefault, "v1.0 beta (revision: 2020.04.23)", new Vector2(marginLeft, marginTop + gridRowSeparation * 22), Main.fontColorDefault);
             spriteBatch.DrawString(Main.fontDefault, "Gonzalo Varela (gonzalo@gonzalovarela.com) (www.gonzalovarela.com)", new Vector2(marginLeft, marginTop + gridRowSeparation * 23), Main.fontColorDefault);
 
         }

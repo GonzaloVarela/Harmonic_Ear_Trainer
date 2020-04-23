@@ -31,8 +31,6 @@ namespace MusicGame
         public static Texture2D bangSelected;
         public static Texture2D bangUnselected;
 
-        public static Bang aboutDialog = null; //creo la variable para el botón aboutDialog pero no la inicializo acá, la voy a inicializar después así me aseguro de que se inicializa después de cargar las fuentes.
-
         public static string gameName = "Harmonic Ear Trainer";
 
         //Creo las variables de tipo "SoundEffect" donde voy a cargar los archivos de sonido con las notas correspondientes.
@@ -78,14 +76,6 @@ namespace MusicGame
             ChordAnsweringManager.Initialize();
             ScoreManager.Initialize();
 
-            aboutDialog = new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 23), "About...", (int)BangCategory.Dialog, true); //botón "aboutDialog"
-            aboutDialog.BangClickedWithLeftButton += OnBangClickedWithLeftButton; //asigno la función al delegate
-        }
-
-        static void OnBangClickedWithLeftButton(Bang bang, int category, bool stateEnabled)
-        {
-            AboutDialog aboutDialog = new AboutDialog();
-            aboutDialog.ShowDialog();
         }
 
         /// <summary>
@@ -156,8 +146,6 @@ namespace MusicGame
             ChordAnsweringManager.Update(gameTime, InputManager.mouseState);
             ScoreManager.Update(gameTime, InputManager.mouseState);
 
-            aboutDialog.Update(gameTime, InputManager.mouseState);
-
             base.Update(gameTime);
         }
 
@@ -183,8 +171,6 @@ namespace MusicGame
             ChordPlayingManager.Draw(spriteBatch);
             ChordAnsweringManager.Draw(spriteBatch);
             ScoreManager.Draw(spriteBatch);
-
-            aboutDialog.Draw(spriteBatch);
 
             spriteBatch.End();
 

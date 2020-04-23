@@ -32,17 +32,17 @@ namespace MusicGame
                 ChordAnsweringManager.RevealShortcut();
             }
 
-            if (InputManager.IsKeyPressedJustNow(Keys.D1))
+            if (InputManager.IsKeyPressedJustNow(Keys.D1) || InputManager.IsKeyPressedJustNow(Keys.NumPad1))
             {
                 ChordListManager.Preset1Shortcut();
             }
 
-            if (InputManager.IsKeyPressedJustNow(Keys.D2))
+            if (InputManager.IsKeyPressedJustNow(Keys.D2) || InputManager.IsKeyPressedJustNow(Keys.NumPad2))
             {
                 ChordListManager.Preset2Shortcut();
             }
 
-            if (InputManager.IsKeyPressedJustNow(Keys.D3))
+            if (InputManager.IsKeyPressedJustNow(Keys.D3) || InputManager.IsKeyPressedJustNow(Keys.NumPad3))
             {
                 ChordListManager.Preset3Shortcut();
             }
@@ -57,7 +57,7 @@ namespace MusicGame
                 AudioManager.AllowAudioShortcut();
             }
 
-            if (InputManager.IsKeyPressedJustNow(Keys.D0))
+            if (InputManager.IsKeyPressedJustNow(Keys.D0) || InputManager.IsKeyPressedJustNow(Keys.NumPad0))
             {
                 ChordListManager.OnlyRootPositionShortcut();
             }
