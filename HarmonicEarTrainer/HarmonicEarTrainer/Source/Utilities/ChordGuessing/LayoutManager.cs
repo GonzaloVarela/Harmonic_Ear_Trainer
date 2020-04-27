@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HarmonicEarTrainer
 {
-    class LayoutManager // ACÁ PONER LOS TEXTOS QUE NO TIENEN VARIABLE, Y LOS GRID Y MARGINS , Y TAL VEZ INCLUSO EL TAMAÑO DE VENTANA
+    class LayoutManager
     {
         //defino márgenes de la ventana que voy a tomar en cuenta cada vez que dibuje algo
         public static int marginLeft = 20;
