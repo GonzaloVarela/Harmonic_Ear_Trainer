@@ -1,5 +1,5 @@
 # Harmonic Ear Trainer
-A simple harmonic ear training game for Windows, made in Monogame.
+A simple harmonic ear training game for Windows, made with Monogame.
 
 You can download the binary (executable) here: https://www.dropbox.com/sh/3y4o9y7ucu5llzf/AAAG2n1YPk1pGDY0r5D-b5Wla?dl=0
 
