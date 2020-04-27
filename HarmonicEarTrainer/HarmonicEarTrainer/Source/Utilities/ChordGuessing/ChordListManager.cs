@@ -96,7 +96,7 @@ namespace HarmonicEarTrainer
 
         }
 
-        static Checkbox.CheckboxClickedEventHandler GetOnChordTypeCheckboxClickedWithLeftButton(int checkboxIndexInTypeList) //ver comentario de función anterior, hago más o menos lo mismo.
+        static Checkbox.CheckboxClickedEventHandler GetOnChordTypeCheckboxClickedWithLeftButton(int checkboxIndexInTypeList) // cada checkbox de la lista "chordType" va a tener asignada a su delegate "CheckboxClickedWithLeftButton" la lambda expression que devuelva esta función, la cual va a incluir el scope, en el que la variable "checkboxIndexInTypeList" corresponde al índice del checkbox en la lista "chordType" (y eso corresponde a su vez con el número de tipo de acorde -que uso para mi enum y demás-) (o sea que a cada asignación va a corresponder un scope distinto, donde la variable checkboxIndexInTypeList tiene un valor distinto)
         {
             return (Checkbox checkbox, int category, bool stateEnabled, bool stateSelected) =>
             {
@@ -109,7 +109,7 @@ namespace HarmonicEarTrainer
             };
         }
 
-        static Checkbox.CheckboxClickedEventHandler GetOnChordTypeCheckboxClickedWithRightButton(int checkboxIndexInTypeList) // cada checkbox de la lista "chordType" va a tener asignada a su delegate "CheckboxClickedRight" la lambda expression que devuelva esta función, la cual va a incluir el scope, en el que la variable "checkboxIndexInTypeList" corresponde al índice del checkbox en la lista "chordType" (y eso corresponde a su vez con el número de tipo de acorde -que uso para mi enum y demás-) (o sea que a cada asignación va a corresponder un scope distinto, donde la variable checkboxIndexInTypeList tiene un valor distinto)
+        static Checkbox.CheckboxClickedEventHandler GetOnChordTypeCheckboxClickedWithRightButton(int checkboxIndexInTypeList) //ver comentario de función anterior, hago más o menos lo mismo.
         {
             return (Checkbox checkbox, int category, bool stateEnabled, bool stateSelected) =>
             {

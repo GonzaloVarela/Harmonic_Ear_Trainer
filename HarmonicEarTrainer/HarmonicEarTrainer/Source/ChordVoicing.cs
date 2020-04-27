@@ -37,9 +37,9 @@ namespace HarmonicEarTrainer
         private int _noteHighCPitchMidi;
 
         //es importante ver qué nota corresponde a qué "voz" para arpegiar los acordes siempre en orden Bass, Tenor, Alto, Soprano. Además, hago las variables public porque voy a usar sus valores para poner en los textos de la respuesta.
-        public int noteTenorPitchMidi;
-        public int noteAltoPitchMidi;
         public int noteSopranoPitchMidi;
+        public int noteAltoPitchMidi;
+        public int noteTenorPitchMidi;
 
 
         //cuando se crea una instancia de la clase no comienza agendada la reproducción de ninguna nota del arpegio (para agendarlas y reproducirlas le iré dando a esta variable distintos valores del enum)
@@ -78,6 +78,34 @@ namespace HarmonicEarTrainer
 
         }
 
+        private int RandomizeTypeAmongEnabledTypes() //Randomiza el tipo de acorde entre los tipos de acorde que haya habilitados
+        {
+            int numberOfEnabledTypes = 0; //Cuento la cantidad de tipos de acorde habilitados
+            for (int i = 0; i < isTypeEnabled.Length; i++)
+            {
+                if (isTypeEnabled[i]) numberOfEnabledTypes++;
+            }
+
+            //Randomizo el tipo del acorde entre la cantidad de tipos de acorde que haya habilitados (si hay 3 tipos de acorde habilitados, va a randomizar un número entre 0 y 2). Este número NO lo usaré directamente como índice del chordType (sigo explicando abajo)
+            int unmappedTypeNumber = Main.randomize.Next(0, numberOfEnabledTypes);
+
+            //El número que me dio"randomize" no lo podré usar directamente como índice para el enum "chordType", porque hay que ver qué tipos están deshabilitados y saltearlos de la cuenta.
+            //Por ejemplo, si me dio que el tipo de acorde era el tercer valor posible del random (índice 2), pero sé que en realidad tengo deshabilitados el primer y el tercer acorde de la lista (índices 0 y 2); el tipo de acorde verdadero que tengo que tocar es el quinto (índice 4).
+
+            // Mapeo del número que me salió del random al índice que realmente va a determinar el tipo de acorde ("salteando" los que se hayan deshabilitado)
+            // El número unmappedTypeNumber es algo así como la cantidad de "pasos" que tengo para recorrer las opciones de tipo de acorde.
+            // Sin embargo, las opciones de tipo de acorde que estén deshabilitadas no me obligan a "gastarme un paso" (porque me las salteo)
+            // Por ejemplo, si unmappedTypeNumber es 2, pero el tipo de acorde 1 está deshabilitado, mappedTimeNumber debe ser 3.
+            int mappedTypeNumber; //inicializo la variable que va a determinar el número mapeado.
+            for (mappedTypeNumber = 0; mappedTypeNumber < isTypeEnabled.Length; mappedTypeNumber++) //comienzo a iterar hasta como máximo la cantidad de índices en isTypeEnabled (no necesariamente voy a llegar a iterar hasta ese máximo), sumándole en cada vuelta 1 a mapped chordType number
+            {
+                if (isTypeEnabled[mappedTypeNumber]) unmappedTypeNumber--; //si y solo sí el índice IsTypeEnabled por el que se está pasando está stateEnsabled, tengo que gastarme uno de los pasos
+                                                                           //en cambio, si está disabled, puedo volver al comienzo del for statement (sumarle 1 a mappedTypeNumber sin necesidad de gastarme uno de los pasos)
+
+                if (unmappedTypeNumber < 0) break; // Si ya no me quedan pasos me tengo que salir del for (y el valor de mappedTypeNumber al que haya llegado hasta este momento va a ser el que se use como índice para el enum correspondiente a esa variable).
+            }
+            return mappedTypeNumber;         // devuelvo el número de tipo de acorde "real" (es decir, mapeado a los acordes que haya habilitados)
+        }
 
         private void DetermineHighNotes()  //calculo cuáles son las notas superiores del acorde en base a cuál es el bajo y cuál es el tipo de acorde.
         {
@@ -1159,36 +1187,6 @@ namespace HarmonicEarTrainer
             else if (type == ChordType.SevenSusTwo && inversion == ChordInversion.ThirdInversion) noteRootPitchClass = (_noteBassPitchClass + 2) % 12;
             else if (type == ChordType.Fifth && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
         }
-
-        private int RandomizeTypeAmongEnabledTypes() //Randomiza el tipo de acorde entre los tipos de acorde que haya habilitados
-        {
-            int numberOfEnabledTypes = 0; //Cuento la cantidad de tipos de acorde habilitados
-            for (int i = 0; i < isTypeEnabled.Length; i++)
-            {
-                if (isTypeEnabled[i]) numberOfEnabledTypes++;
-            }
-
-            //Randomizo el tipo del acorde entre la cantidad de tipos de acorde que haya habilitados (si hay 3 tipos de acorde habilitados, va a randomizar un número entre 0 y 2). Este número NO lo usaré directamente como índice del chordType (sigo explicando abajo)
-            int unmappedTypeNumber = Main.randomize.Next(0, numberOfEnabledTypes);
-
-            //El número que me dio"randomize" no lo podré usar directamente como índice para el enum "chordType", porque hay que ver qué tipos están deshabilitados y saltearlos de la cuenta.
-            //Por ejemplo, si me dio que el tipo de acorde era el tercer valor posible del random (índice 2), pero sé que en realidad tengo deshabilitados el primer y el tercer acorde de la lista (índices 0 y 2); el tipo de acorde verdadero que tengo que tocar es el quinto (índice 4).
-
-            // Mapeo del número que me salió del random al índice que realmente va a determinar el tipo de acorde ("salteando" los que se hayan deshabilitado)
-            // El número unmappedTypeNumber es algo así como la cantidad de "pasos" que tengo para recorrer las opciones de tipo de acorde.
-            // Sin embargo, las opciones de tipo de acorde que estén deshabilitadas no me obligan a "gastarme un paso" (porque me las salteo)
-            // Por ejemplo, si unmappedTypeNumber es 2, pero el tipo de acorde 1 está deshabilitado, mappedTimeNumber debe ser 3.
-            int mappedTypeNumber; //inicializo la variable que va a determinar el número mapeado.
-            for (mappedTypeNumber = 0; mappedTypeNumber < isTypeEnabled.Length; mappedTypeNumber++) //comienzo a iterar hasta como máximo la cantidad de índices en isTypeEnabled (no necesariamente voy a llegar a iterar hasta ese máximo), sumándole en cada vuelta 1 a mapped chordType number
-            {
-                if (isTypeEnabled[mappedTypeNumber]) unmappedTypeNumber--; //si y solo sí el índice IsTypeEnabled por el que se está pasando está stateEnsabled, tengo que gastarme uno de los pasos
-                                                                           //en cambio, si está disabled, puedo volver al comienzo del for statement (sumarle 1 a mappedTypeNumber sin necesidad de gastarme uno de los pasos)
-
-                if (unmappedTypeNumber < 0) break; // Si ya no me quedan pasos me tengo que salir del for (y el valor de mappedTypeNumber al que haya llegado hasta este momento va a ser el que se use como índice para el enum correspondiente a esa variable).
-            }
-            return mappedTypeNumber;         // devuelvo el número de tipo de acorde "real" (es decir, mapeado a los acordes que haya habilitados)
-        }
-
 
         int RandomizeDyadInversionAmongEnabledInversions() //Ver los comentarios de "RandomizeTypeAmongEnabledTypes", porque es casi lo mismo
         {
