@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework; //Lo necesito para usar el GameTime
+using Microsoft.Xna.Framework.Audio;
+using System;
 using System.Diagnostics;
 
 
@@ -7,6 +9,7 @@ namespace HarmonicEarTrainer
 
     public class ChordVoicing
     {
+
         public int noteRootPitchClass { get; set; }  //la hago public porque la voy a usar para poner en los textos de la respuesta.
         public ChordType type { get; set; } //creo una variable "chordType" de tipo "ChordType" (que es un enum)
         public ChordInversion inversion { get; set; } //creo una variable "chordInversion" de tipo "ChordInversion" (que es un enum)
@@ -53,6 +56,12 @@ namespace HarmonicEarTrainer
         //array de bools para determinar qué inversions están habilitadas
         public static bool[] isInversionEnabled = new bool[4];
 
+        // voy a usar estas variables para cargar a cada una el sonido de una voz, y antes de arrancar una reproducción poder detener la anterior.
+        public SoundEffectInstance sfxInstanceSoprano;
+        public SoundEffectInstance sfxInstanceAlto;
+        public SoundEffectInstance sfxInstanceTenor;
+        public SoundEffectInstance sfxInstanceBass;
+        
 
         public void GenerateRandomVoicing()
         {
@@ -66,6 +75,7 @@ namespace HarmonicEarTrainer
             CalculateRootNotePitchClass(); // calculo cuál es el pitch class del rootnote (en relación al bajo, y tomando el cuenta el tipo de acorde y la inversión).
 
             AssignHighNotesToHighVoices(); // Analizo cuál de las notas superiores (HighA, HighB y HighC) es la más aguda (que se la asigno a la soprano), segunda más aguda (que se la asigno al alto) y más grave (que se la asigno al tenor).
+
         }
 
 
@@ -1150,7 +1160,7 @@ namespace HarmonicEarTrainer
             else if (type == ChordType.Fifth && inversion == ChordInversion.FirstInversion) noteRootPitchClass = (_noteBassPitchClass + 5) % 12; //considero la 5ta como el bajo en la primera inversión
         }
 
-        int RandomizeTypeAmongEnabledTypes() //Randomiza el tipo de acorde entre los tipos de acorde que haya habilitados
+        private int RandomizeTypeAmongEnabledTypes() //Randomiza el tipo de acorde entre los tipos de acorde que haya habilitados
         {
             int numberOfEnabledTypes = 0; //Cuento la cantidad de tipos de acorde habilitados
             for (int i = 0; i < isTypeEnabled.Length; i++)
@@ -1299,18 +1309,28 @@ namespace HarmonicEarTrainer
             Debug.WriteLine($"Bass Pitch Midi: {noteBassPitchMidi}");
         }
 
-
         public void PlaySimultaneous()
         {
             _voiceToPlay = Voice.None; //des-agendo las reproducciones de arpeggio (para que no se superponga esto con nuevas notas de un arpegio que viene sonando de antes).
 
-            Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
-            Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
+            StopAll(); // si las variables para sound effect instances están asignadas, detiene las esas instancias (es decir, detiene cualquier nota que se estuviera reproduciendo) (y les hace dispose, por las dudas)
+
+            CreateSoundEffectInstances(); // asigna las variables para sound effect instances a nuevos sound effect instances.
+
+            //comienzo las reproducciones
+            sfxInstanceSoprano.Volume = .5f; sfxInstanceSoprano.Play();
+            sfxInstanceAlto.Volume = .5f; sfxInstanceAlto.Play();
+            sfxInstanceTenor.Volume = .5f; sfxInstanceTenor.Play();
+            sfxInstanceBass.Volume = .5f; sfxInstanceBass.Play();
+
         }
+
         public void PlayArpeggio()
         {
+            StopAll(); // si las variables para sound effect instances están asignadas, detiene las esas instancias (es decir, detiene cualquier nota que se estuviera reproduciendo) (y les hace dispose, por las dudas)
+
+            CreateSoundEffectInstances(); // asigna las variables para sound effect instances a nuevos sound effect instances.
+
             _voiceToPlay = Voice.Bass;
             if (ChordPlayingManager.slowerArpeggiations.stateSelected == true) //determino la velocidad del arpegio dependiendo de si el checkbox "Slower Arpeggiations" está activado o no.
             {
@@ -1323,6 +1343,31 @@ namespace HarmonicEarTrainer
             _arpeggioTimer = 0; //reseteo el Timer del arpegio (que está en ms)
         }
 
+
+        private void StopAll() // si las variables para sound effect instances están asignadas, detengo esas instancias (es decir, detengo cualquier nota que se estuviera reproduciendo) (y les hago dispose, por las dudas)
+        {
+            sfxInstanceSoprano?.Stop();
+            sfxInstanceSoprano?.Dispose();
+            sfxInstanceAlto?.Stop();
+            sfxInstanceAlto?.Dispose();
+            sfxInstanceTenor?.Stop();
+            sfxInstanceTenor?.Dispose();
+            sfxInstanceBass?.Stop();
+            sfxInstanceBass?.Dispose();
+        }
+
+
+        private void CreateSoundEffectInstances()
+        {
+            //cargo cada sonido de nota a la voice correspondiente
+            sfxInstanceSoprano = Main.noteSoundFiles[noteSopranoPitchMidi].CreateInstance();
+            sfxInstanceAlto = Main.noteSoundFiles[noteAltoPitchMidi].CreateInstance();
+            sfxInstanceTenor = Main.noteSoundFiles[noteTenorPitchMidi].CreateInstance();
+            sfxInstanceBass = Main.noteSoundFiles[noteBassPitchMidi].CreateInstance();
+        }
+
+
+
         public void UpdateArpeggio(GameTime gameTime)
         {
             _arpeggioTimer += gameTime.ElapsedGameTime.TotalMilliseconds; //al timer del arpegio (que funciona con milisegundos) le voy sumando el tiempo que pasa en cada frame (sin eso no sería un timer).
@@ -1333,7 +1378,7 @@ namespace HarmonicEarTrainer
                 case Voice.Bass:
                     if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 0)
                     {
-                        Main.noteSoundFiles[noteBassPitchMidi].Play(.5f, 0f, 0f);
+                        sfxInstanceBass.Volume = .5f; sfxInstanceBass.Play();
                         _voiceToPlay = Voice.Tenor;
                     }
                     break;
@@ -1341,7 +1386,7 @@ namespace HarmonicEarTrainer
                 case Voice.Tenor:
                     if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 1)
                     {
-                        Main.noteSoundFiles[noteTenorPitchMidi].Play(.5f, 0f, 0f);
+                        sfxInstanceTenor.Volume = .5f; sfxInstanceTenor.Play();
                         _voiceToPlay = Voice.Alto;
                     }
                     break;
@@ -1349,7 +1394,7 @@ namespace HarmonicEarTrainer
                 case Voice.Alto:
                     if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 2)
                     {
-                        Main.noteSoundFiles[noteAltoPitchMidi].Play(.5f, 0f, 0f);
+                        sfxInstanceAlto.Volume = .5f; sfxInstanceAlto.Play();
                         _voiceToPlay = Voice.Soprano;
                     }
                     break;
@@ -1357,7 +1402,7 @@ namespace HarmonicEarTrainer
                 case Voice.Soprano:
                     if (_arpeggioTimer >= _arpeggioTimeBetweenNotes * 3)
                     {
-                        Main.noteSoundFiles[noteSopranoPitchMidi].Play(.5f, 0f, 0f);
+                        sfxInstanceSoprano.Volume = .5f; sfxInstanceSoprano.Play();
                         _voiceToPlay = Voice.None;
                     }
                     break;

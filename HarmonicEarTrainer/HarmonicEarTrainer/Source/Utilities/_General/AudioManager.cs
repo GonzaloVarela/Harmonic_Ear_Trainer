@@ -8,7 +8,7 @@ namespace HarmonicEarTrainer
     static class AudioManager
     {
 
-        static Checkbox _allowAudio = new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 2, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 18), "Audio [ space ]", (int)CheckboxCategory.Option, true, true); //inicializo una instancia de la class "Checkbox", que voy a usar para habilitar o deshabilitar el audio.
+        static Checkbox _allowAudio = new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 2, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 18), "Audio", (int)CheckboxCategory.Option, true, true, Keys.Space); //inicializo una instancia de la class "Checkbox", que voy a usar para habilitar o deshabilitar el audio.
 
         public static float audioVolume = 1f; //Creo una variable "audioVolume", que inicializo en 1 pero que luego haré que el jugador pueda determinar con un slider.
 
@@ -33,13 +33,6 @@ namespace HarmonicEarTrainer
                 checkbox.stateSelected = true;
             }
         }
-
-
-        public static void AllowAudioShortcut() //función que se llama si uso el shortcut para habilitar o deshabilitar el audio (tecla Space)
-        {
-            _allowAudio.OnCheckboxClickedWithLeftButton(); //Si uso el shortcut, quiero hacer lo mismo que si clickeara ese checkbox con click izquierdo
-        }
-
 
         public static void Update(MouseState mouseState)
         {

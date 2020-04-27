@@ -60,14 +60,10 @@ namespace HarmonicEarTrainer
             _chordInversion.Add(new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 2, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 15), $"{Dictionaries.chordInversion[2]}", (int)CheckboxCategory.ChordInversion, true, false));
             _chordInversion.Add(new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 15), $"{Dictionaries.chordInversion[3]}", (int)CheckboxCategory.ChordInversion, true, false));
 
-            _chordTypePresets.Add(1, new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Basic [ 1 ]", (int)BangCategory.Chord, true));
-            _chordTypePresets.Add(2, new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 2, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Advanced [ 2 ]", (int)BangCategory.Chord, true));
-            _chordTypePresets.Add(3, new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Expert [ 3 ]", (int)BangCategory.Chord, true));
-
-            _onlyRootPosition = new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 18), "Only Root Position [ 0 ]", (int)CheckboxCategory.Option, true, false);
+            _onlyRootPosition = new Checkbox(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 18), "Only Root Position", (int)CheckboxCategory.Option, true, false, Keys.D0, Keys.NumPad0);
 
 
-            //asocio los delegates de los Checkboxes y Bangs con las funciones correspondientes
+            //asocio los delegates de los Checkboxes con las funciones correspondientes
             for (int checkboxIndexInTypeList = 0; checkboxIndexInTypeList < _chordType.Count; checkboxIndexInTypeList++)
             {
                 _chordType[checkboxIndexInTypeList].CheckboxClickedWithLeftButton += GetOnChordTypeCheckboxClickedWithLeftButton(checkboxIndexInTypeList); //ver comentario de asignación anterior, hago más o menos lo mismo.
@@ -79,11 +75,25 @@ namespace HarmonicEarTrainer
                 _chordInversion[checkboxIndexInInversionList].CheckboxClickedWithLeftButton += GetOnChordInversionCheckboxClickedWithLeftButton(checkboxIndexInInversionList); //ver comentario de asignación anterior, hago más o menos lo mismo.
             }
 
-            _chordTypePresets[1].BangClickedWithLeftButton += OnChordTypePresets1BangClickedWithLeftButton;
-            _chordTypePresets[2].BangClickedWithLeftButton += OnChordTypePresets2BangClickedWithLeftButton;
-            _chordTypePresets[3].BangClickedWithLeftButton += OnChordTypePresets3BangClickedWithLeftButton;
 
             _onlyRootPosition.CheckboxClickedWithLeftButton += OnOnlyRootPositionCheckboxClickedWithLeftButton;
+
+            //creo los bangs, asocio los delegates a las funciones correspondientes, y luego los agrego al diccionario (podría agregarlos al diccionario y luego asociar sus delegates, pero eso creo que sería menos eficiente, porque buscar al bang correspondiente adentro de un diccionario lleva más tiempo que accederlo directamente, me parece)
+            Bang currentBang = null; //voy a usar una variable llamada "currentBang" como carretilla, para ir referenciando a los bangs que creo, asignándoles una función a su delegate, y agregándolos al diccionario.
+
+            currentBang = new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Basic", (int)BangCategory.Chord, true, Keys.D1, Keys.NumPad1);
+            currentBang.BangClickedWithLeftButton += OnChordTypePresets1BangClickedWithLeftButton;
+            _chordTypePresets.Add(1, currentBang);
+
+            //una vez que agregué ese bang al diccionario, voy a acceder a él por medio del diccionario, así que paso a usar la variable "currentBang" para hacer lo mismo con los otros bangs.
+            currentBang = new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 2, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Advanced", (int)BangCategory.Chord, true, Keys.D2, Keys.NumPad2);
+            currentBang.BangClickedWithLeftButton += OnChordTypePresets2BangClickedWithLeftButton;
+            _chordTypePresets.Add(2, currentBang);
+
+            currentBang = new Bang(new Vector2(LayoutManager.marginLeft + LayoutManager.gridColumnSeparation * 3, LayoutManager.marginTop + LayoutManager.gridRowSeparation * 12), "Expert", (int)BangCategory.Chord, true, Keys.D3, Keys.NumPad3);
+            currentBang.BangClickedWithLeftButton += OnChordTypePresets3BangClickedWithLeftButton;
+            _chordTypePresets.Add(3, currentBang);
+
         }
 
         static Checkbox.CheckboxClickedEventHandler GetOnChordTypeCheckboxClickedWithLeftButton(int checkboxIndexInTypeList) //ver comentario de función anterior, hago más o menos lo mismo.
@@ -212,24 +222,6 @@ namespace HarmonicEarTrainer
                 }
                 checkbox.stateSelected = true;
             }
-        }
-
-        public static void Preset1Shortcut() //función que se llama si uso el shortcut para preset "0" (tecla "0")
-        {
-            _chordTypePresets[1].OnBangClickedWithLeftButton(); //Si uso el shortcut, quiero hacer lo mismo que si clickeara ese ese bang con click izquierdo
-        }
-        public static void Preset2Shortcut() //función que se llama si uso el shortcut para preset "1" (tecla "1")
-        {
-            _chordTypePresets[2].OnBangClickedWithLeftButton(); //Si uso el shortcut, quiero hacer lo mismo que si clickeara ese ese bang con click izquierdo
-        }
-        public static void Preset3Shortcut() //función que se llama si uso el shortcut para preset "2" (tecla "2")
-        {
-            _chordTypePresets[3].OnBangClickedWithLeftButton(); //Si uso el shortcut, quiero hacer lo mismo que si clickeara ese ese bang con click izquierdo
-        }
-
-        public static void OnlyRootPositionShortcut() //función que se llama si uso el shortcut para habilitar o deshabilitar inversions (tecla "0")
-        {
-            _onlyRootPosition.OnCheckboxClickedWithLeftButton(); //Si uso el shortcut, quiero hacer lo mismo que si clickeara ese checkbox con click izquierdo
         }
 
         public static void Update(GameTime gameTime, MouseState mouseState)

@@ -139,7 +139,6 @@ namespace HarmonicEarTrainer
                 Exit();
 
             InputManager.Update();
-            KeyboardShortcutManager.Update();
 
             AudioManager.Update(InputManager.mouseState); //también a la función Update de AudioManager
             ChordListManager.Update(gameTime, InputManager.mouseState);
