@@ -57,8 +57,8 @@ namespace HarmonicEarTrainer
             // TODO: Add your initialization logic here
 
             //Cambio el tamaño de la ventana
-            graphics.PreferredBackBufferWidth = 1076; //el Vector2 trabaja con floats, así que acá preciso castear a Int
-            graphics.PreferredBackBufferHeight = 980; //el Vector2 trabaja con floats, así que acá preciso castear a Int
+            graphics.PreferredBackBufferWidth = (int)windowSize.X; //el Vector2 trabaja con floats, así que acá preciso castear a Int
+            graphics.PreferredBackBufferHeight = (int)windowSize.Y; //el Vector2 trabaja con floats, así que acá preciso castear a Int
             graphics.ApplyChanges();
 
 

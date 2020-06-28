@@ -1,7 +1,7 @@
 # Harmonic Ear Trainer
-A simple harmonic ear training game for Windows, made in C#, using Monogame.
+A simple harmonic ear training game for Windows, made by Gonzalo Varela using C# with Monogame.
 
-The latest release is v1.0 (2020.04.26), and there are no further releases planned at this moment.
+The latest release is v1.0b (2020.06.28), and there are no further releases planned at this moment.
 
 Links:
 - Source code: https://github.com/GonzaloVarela/Harmonic_Ear_Trainer
